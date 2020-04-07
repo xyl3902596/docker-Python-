@@ -33,11 +33,39 @@ Build镜像
     
     写好Dockerfile以后,建立images文件
     docker build -t [image_name] ./
+
+push镜像到docker hub
+----
+    先去https://hub.docker.com/,注册一个账号,比如我的账号是xyl123,然后建立一个仓库,如first,那么这个仓库就可以用xyl123/first来指代.
+    docker login #登录docker
+    docker tag images_name xyl123/first
+    docker push xyl123/first
+    这时打开自己的docker hub主页会发现已经存在了刚上传的images
+pull镜像到本地
+----
+    这是docker很重要的一个指令,因为它不仅可以将同事做好的镜像pull到本地,也可以把别人的镜像pull到本地
+    docker pull xyl123/first #通过运行docker images 你会发现本地多出了一个镜像,接下来你就可以利用images的相关指令对pull下来的images进行操作了.
+    
 images相关指令
 -----
     docker images   #查看目前所有的images文件
     docker rmi [images_id]  #删除某个images
     docker tag images_name[:tag] [user_name]/[project_name_on_docker_hub]  #将images push到docker hub的必要操作
-    docker run -it 
-    
-    
+    docker run -it images_name /bin/bash  #运行镜像,产生一个容器,并以shell的交互形式运行容器.
+container相关指令
+----
+    docker ps [-a] #查看正在运行的container,-a可以查看所有的container
+    docker start container_id #运行某个container
+    docker stop container_id #停止某个container
+    docker exec -it container_id /bin/bash #进入某个container
+    exit #退出container,退出后容器并不停止,这是和 docker attach container_id 方式进入容器的根本的不同
+容器和本地运行结果的相互拷贝
+----
+    docker cp container_name:文件在container的地址 本地地址,拷贝container的文件到本地,举例如下:
+    docker cp testtomcat：/usr/local/tomcat/webapps/test/js/test.js /opt
+    docker cp 本地地址 container_name:文件在container的地址,拷贝本地文件到container,举例如下:
+    docker cp /opt/test.js testtomcat：/usr/local/tomcat/webapps/test/js
+容器生成images
+----
+    修改后的容器想要再次生成镜像
+    docker commit docker_id new_images_name
