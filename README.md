@@ -17,4 +17,27 @@ docker是什么
     sudo gpasswd -a $USER docker	#USER处是你自己的用户名,用你的用户名代替,将你的用户名加到docker用户组里
     newgrp docker  #更新用户组
     groups #这时再查看用户所在组的组成员,发现这时候有docker了,但是很可能你再开一个shell groups还是没有docker,我弄了好久,电脑重启以后就有了.
+Build镜像
+----
+    项目文件夹里应有两个文件:1.项目代码文件夹 2.Dockerfile
+    Dockerfile里写的是项目打包成镜像的一些细节. 如:
+     
+    FROM python:2.7   #工作python环境
+    ADD ./docker_file /file  #将本地docker_file里的所有文件放到镜像中file文件夹里面
+    WORKDIR /file  #工作目录为/file
+    RUN pip install -U pip  #以下3行为pip换阿里源
+    RUN pip config set global.index-url http://mirrors.aliyun.com/pypi/simple
+    RUN pip config set install.trusted-host mirrors.aliyun.com:
+    RUN pip install -r requirements.txt #pip项目所需依赖包,可以通过pipreqs ./ 指令自动生成
+    CMD ["python", "/file/evaluate_image.py"]  #项目执行文件
+    
+    写好Dockerfile以后,建立images文件
+    docker build -t [image_name] ./
+images相关指令
+-----
+    docker images   #查看目前所有的images文件
+    docker rmi [images_id]  #删除某个images
+    docker tag images_name[:tag] [user_name]/[project_name_on_docker_hub]  #将images push到docker hub的必要操作
+    docker run -it 
+    
     
